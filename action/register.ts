@@ -4,6 +4,8 @@ import { RegisterSchema } from "@/schemas";
 import bcrypt from "bcrypt"
 import { db } from "@/lib/db";
 import { getUserByEmail } from "@/data/user";
+import { generateVerificationToken } from "@/data/tokens";
+import { sendVerificationEmail } from "@/lib/mail";
 
 export const Register = async(values:z.infer<typeof RegisterSchema>)=>{
     const validateFields = RegisterSchema.safeParse(values);
@@ -15,7 +17,6 @@ export const Register = async(values:z.infer<typeof RegisterSchema>)=>{
     const hashedPassword = await bcrypt.hash(password,10)
 
     const existingUser = await getUserByEmail(email)
-    console.log("Existing User:",existingUser)
     if(existingUser){
         return {error:"Email already in use!"};
     }
@@ -26,6 +27,7 @@ export const Register = async(values:z.infer<typeof RegisterSchema>)=>{
             password:hashedPassword
         }
     });
-    // TODO: Send verification token email
-    return {success:"User created successfully!"}
+    const verificationToken = await generateVerificationToken(email)
+    await sendVerificationEmail(verificationToken.email,verificationToken.token)
+    return {success:"Confirmation Email Send!"}
 }

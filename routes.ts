@@ -7,7 +7,10 @@
 import exp from "constants";
 
 export const publicRoutes = [
-    "/"
+    "/",
+    "/auth/new-verification",
+    "/auth/reset",
+    "/auth/new-password"
 ];
 /**
 *   An array of routes that are used for authentication
@@ -17,6 +20,7 @@ export const publicRoutes = [
 export const authRoutes = [
     "/auth/login",
     "/auth/register",
+    "/auth/error"
 ]
 
 /**
